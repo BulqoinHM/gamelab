@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLab - Dashboard Penjual</title>
+    <!-- Memuat Chart.js dari CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* --- ATURAN GLOBAL & VARIABEL --- */
+        :root {
+            --bg-main: #0b0b0f;
+            --bg-card: #14141b;
+            --bg-sidebar: #101015;
+            --bg-topbar: #101015;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #262631;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --sidebar-width: 260px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        /* --- SIDEBAR RESPONSIF --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+        }
+
+        .sidebar-brand {
+            font-size: 18pt;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 40px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sidebar-brand span {
+            color: var(--primary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 11pt;
+            transition: var(--transition-smooth);
+        }
+
+        .menu-item a:hover, .menu-item.active a {
+            color: var(--text-main);
+            background-color: rgba(124, 58, 237, 0.1);
+        }
+
+        .menu-item.active a {
+            border-left: 4px solid var(--primary);
+            background-color: rgba(124, 58, 237, 0.15);
+        }
+
+        .menu-icon {
+            font-size: 14pt;
+        }
+
+        /* Tombol Tutup Sidebar (Mobile saja) */
+        .sidebar-close {
+            display: none;
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20pt;
+            cursor: pointer;
+        }
+
+        /* --- INTERFAS UTAMA (KONTEN) --- */
+        .main-wrapper {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+        }
+
+        /* --- TOP BAR --- */
+        .topbar {
+            height: 70px;
+            background-color: var(--bg-topbar);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* Hamburger Button (Mobile saja) */
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 18pt;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 14pt;
+            font-weight: 700;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 11pt;
+            color: #ffffff;
+        }
+
+        .user-name {
+            font-size: 11pt;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 9.5pt;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .btn-logout:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+            background-color: rgba(239, 68, 68, 0.05);
+        }
+
+        /* --- KONTEN UTAMA --- */
+        .content-container {
+            padding: 32px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* 3. RINGKASAN CARD GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            transition: var(--transition-smooth);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.2);
+        }
+
+        .stat-info h4 {
+            font-size: 10pt;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 18pt;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .stat-icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16pt;
+        }
+
+        .icon-sales { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .icon-trx { background-color: rgba(124, 58, 237, 0.1); color: var(--primary); }
+        .icon-items { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+        /* 4. CHART SECTION */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .chart-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-card h3 {
+            font-size: 12pt;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .chart-caption {
+            font-size: 9.5pt;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* 5. TABEL TRANSAKSI */
+        .table-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .table-card-header {
+            margin-bottom: 20px;
+        }
+
+        .table-card-header h3 {
+            font-size: 12pt;
+            font-weight: 700;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 10.5pt;
+        }
+
+        .data-table th {
+            background-color: rgba(255, 255, 255, 0.02);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(38, 38, 49, 0.5);
+            color: var(--text-main);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .order-id {
+            font-family: monospace;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Badge Status */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 8.5pt;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success { background-color: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .badge-warning { background-color: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* --- RESPONSIVITAS --- */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -100%; /* Sembunyi secara default di mobile */
+            }
+
+            .sidebar.active {
+                left: 0; /* Geser masuk saat aktif */
+            }
+
+            .sidebar-close {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .sidebar-toggle {
+                display: block;
+            }
+
+            .topbar {
+                padding: 0 20px;
+            }
+
+            .content-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. SIDEBAR (RESPONSIF / COLLAPSIBLE) -->
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close" onclick="toggleSidebar()">&times;</button>
+        <a href="#" class="sidebar-brand">Game<span>Lab</span></a>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item active">
+                <a href="#">
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <span class="menu-icon">📦</span>
+                    <span>Produk</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <span class="menu-icon">💸</span>
+                    <span>Transaksi</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <span class="menu-icon">📈</span>
+                    <span>Laporan</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="#">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Pengaturan</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- INTERFAS UTAMA (KONTEN UTAMA) -->
+    <div class="main-wrapper">
+        
+        <!-- 2. TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+                <h2 class="page-title">Ringkasan Toko</h2>
+            </div>
+            <div class="topbar-right">
+                <div class="user-profile">
+                    <div class="user-avatar">JD</div>
+                    <span class="user-name">John Doe</span>
+                </div>
+                <button class="btn-logout" onclick="alert('Keluar dari sistem dummy dashboard.')">Logout</button>
+            </div>
+        </header>
+
+        <!-- KONTEN CONTEXT BOX -->
+        <main class="content-container">
+            
+            <!-- 3. RINGKASAN DALAM BENTUK CARD -->
+            <section class="stats-grid">
+                <!-- Total Penjualan -->
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4>Total Penjualan</h4>
+                        <div class="stat-value">Rp 14.350.000</div>
+                    </div>
+                    <div class="stat-icon-box icon-sales">💰</div>
+                </div>
+                <!-- Total Transaksi -->
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4>Total Transaksi</h4>
+                        <div class="stat-value">132 Trx</div>
+                    </div>
+                    <div class="stat-icon-box icon-trx">🧾</div>
+                </div>
+                <!-- Produk Terjual -->
+                <div class="stat-card">
+                    <div class="stat-info">
+                        <h4>Produk Terjual</h4>
+                        <div class="stat-value">245 Item</div>
+                    </div>
+                    <div class="stat-icon-box icon-items">🛍️</div>
+                </div>
+            </section>
+
+            <!-- 4. CHART RINGKASAN (1 BULAN & 1 MINGGU) -->
+            <section class="charts-grid">
+                <!-- Chart 1 Bulan Terakhir -->
+                <div class="chart-card">
+                    <h3>Penjualan 1 Bulan Terakhir</h3>
+                    <p class="chart-caption">Visualisasi fluktuasi grafik omset kotor dalam rentang waktu 30 hari berjalan.</p>
+                    <div class="chart-container">
+                        <canvas id="monthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 1 Minggu Terakhir -->
+                <div class="chart-card">
+                    <h3>Penjualan 1 Minggu Terakhir</h3>
+                    <p class="chart-caption">Grafik harian performa volume pemesanan produk digital seminggu ke belakang.</p>
+                    <div class="chart-container">
+                        <canvas id="weekChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. TABEL TRANSAKSI -->
+            <section class="table-card">
+                <div class="table-card-header">
+                    <h3>Daftar Transaksi Terbaru</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Produk</th>
+                                <th>Email</th>
+                                <th>Nomor HP</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="order-id">DE-1781251962001</td>
+                                <td>E-Book Masterclass Bisnis Kopi</td>
+                                <td>budi.santoso@gmail.com</td>
+                                <td>081234567890</td>
+                                <td><span class="badge badge-success">Sukses</span></td>
+                            </tr>
+                            <tr>
+                                <td class="order-id">DE-1781251962002</td>
+                                <td>Video Panduan Keripik Cuan</td>
+                                <td>siti.rahma@yahoo.com</td>
+                                <td>082198765432</td>
+                                <td><span class="badge badge-success">Sukses</span></td>
+                            </tr>
+                            <tr>
+                                <td class="order-id">DE-1781251963405</td>
+                                <td>Template Desain Kemasan Premium</td>
+                                <td>andi.wijaya@outlook.com</td>
+                                <td>085711223344</td>
+                                <td><span class="badge badge-warning">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td class="order-id">DE-1781251964119</td>
+                                <td>E-Book Masterclass Bisnis Kopi</td>
+                                <td>mega.utami@gmail.com</td>
+                                <td>081955667788</td>
+                                <td><span class="badge badge-success">Sukses</span></td>
+                            </tr>
+                            <tr>
+                                <td class="order-id">DE-1781251965821</td>
+                                <td>Video Panduan Keripik Cuan</td>
+                                <td>reza.pratama@gmail.com</td>
+                                <td>081388990011</td>
+                                <td><span class="badge badge-danger">Gagal</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- SCRIPT JAVASCRIPT VANILLA -->
+    <script>
+        // FUNGSI TOGGLE SIDEBAR RESPONSIF (COLLAPSIBLE DI MOBILE)
+        const sidebar = document.getElementById('sidebar');
+        function toggleSidebar() {
+            sidebar.classList.toggle('active');
+        }
+
+        // KONFIGURASI CHART.JS DUMMY DATA
+
+        // Mengatur tema teks Chart.js ke warna terang agar cocok dengan Dark Mode
+        Chart.defaults.color = '#9ca3af';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // 1. Chart Bulanan (Line Chart)
+        const ctxMonth = document.getElementById('monthChart').getContext('2d');
+        new Chart(ctxMonth, {
+            type: 'line',
+            data: {
+                labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                datasets: [{
+                    label: 'Omset Penjualan (Rupiah)',
+                    data: [2800000, 4100000, 3200000, 4250000],
+                    borderColor: '#7c3aed',
+                    backgroundColor: 'rgba(124, 58, 237, 0.1)',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true,
+                    pointBackgroundColor: '#7c3aed',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#262631' },
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + (value/1000000) + 'jt';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // 2. Chart Mingguan (Bar Chart)
+        const ctxWeek = document.getElementById('weekChart').getContext('2d');
+        new Chart(ctxWeek, {
+            type: 'bar',
+            data: {
+                labels: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+                datasets: [{
+                    label: 'Produk Terjual',
+                    data: [12, 19, 15, 8, 22, 35, 28],
+                    backgroundColor: '#7c3aed',
+                    borderRadius: 6,
+                    hoverBackgroundColor: '#6d28d9'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        grid: { color: '#262631' },
+                        beginAtZero: true
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

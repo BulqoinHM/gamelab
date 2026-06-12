@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameLab - E-Commerce Produk Digital</title>
+    <!-- Mengintegrasikan Snap.js Sandbox Midtrans -->
+    <!-- GANTI data-client-key dengan Client Key Sandbox Anda -->
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-GaZsHGn5U_anlexW"></script>
+    <style>
+        /* --- ATURAN GLOBAL & VARIABEL --- */
+        :root {
+            --bg-main: #0b0b0f;
+            --bg-card: #14141b;
+            --bg-nav: #101015;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --border-color: #262631;
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* --- SAKLAR UTAMA TOMBOL --- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 28px;
+            font-size: 14pt;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            border: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.6);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        /* --- NAVBAR RESPONSIF --- */
+        .navbar {
+            background-color: rgba(16, 16, 21, 0.85);
+            backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 18pt;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 11pt;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: var(--transition-smooth);
+            position: relative;
+            padding: 4px 0;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-main);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hamburger Menu (Pure CSS Toggle) */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            z-index: 1010;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 26px;
+            height: 3px;
+            background-color: var(--text-main);
+            border-radius: 2px;
+            transition: var(--transition-smooth);
+        }
+
+        #nav-checkbox {
+            display: none;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 160px 0 100px 0;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 48px;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-size: 34pt;
+            line-height: 1.2;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(to right, #a78bfa, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 13pt;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+            max-width: 540px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+        }
+
+        .hero-mockup {
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .mockup-wrapper {
+            background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .mockup-image {
+            border-radius: 16px;
+            width: 100%;
+            object-fit: cover;
+        }
+
+        /* --- SECTION WHY CHOOSE US --- */
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 24pt;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 11pt;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            border-radius: 16px;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(124, 58, 237, 0.3);
+            box-shadow: 0 12px 20px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(124, 58, 237, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 16pt;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .feature-card h3 {
+            font-size: 13pt;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .feature-card p {
+            font-size: 10.5pt;
+            color: var(--text-muted);
+        }
+
+        /* --- SECTION PRODUK --- */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .product-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(124, 58, 237, 0.4);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .product-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            background-color: #1f1f2e;
+            height: 200px;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+
+        .product-tag {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background-color: rgba(11, 11, 15, 0.75);
+            backdrop-filter: blur(4px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 9pt;
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+        }
+
+        .product-content {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 14pt;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-desc {
+            font-size: 10.5pt;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+            margin-top: auto;
+        }
+
+        .product-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 8pt;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .price-value {
+            font-size: 15pt;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* --- FAQ SECTION --- */
+        .faq-wrapper {
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faq-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .faq-input {
+            display: none;
+        }
+
+        .faq-trigger {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            font-size: 12pt;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition-smooth);
+        }
+
+        .faq-trigger:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .faq-icon {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-right: 2px solid var(--text-muted);
+            border-bottom: 2px solid var(--text-muted);
+            transform: rotate(45deg);
+            transition: var(--transition-smooth);
+            margin-right: 6px;
+        }
+
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding: 0 24px;
+            color: var(--text-muted);
+            font-size: 11pt;
+        }
+
+        .faq-content p {
+            padding-bottom: 20px;
+        }
+
+        /* FAQ Toggle Logic via CSS */
+        .faq-input:checked ~ .faq-trigger .faq-icon {
+            transform: rotate(-135deg);
+            border-color: var(--primary);
+        }
+
+        .faq-input:checked ~ .faq-trigger {
+            color: var(--primary);
+        }
+
+        .faq-input:checked ~ .faq-content {
+            max-height: 200px;
+        }
+
+        /* --- INTERACTIVE MODAL CHECKOUT --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 5, 8, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 24px 24px 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 14pt;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 20pt;
+            cursor: pointer;
+            line-height: 1;
+            transition: var(--transition-smooth);
+        }
+
+        .modal-close:hover {
+            color: var(--text-main);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .summary-box {
+            background-color: rgba(255,255,255,0.02);
+            border: 1px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5pt;
+            margin-bottom: 6px;
+        }
+
+        .summary-row:last-child {
+            margin-bottom: 0;
+            font-weight: 700;
+            color: var(--primary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 6px;
+            margin-top: 6px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 10pt;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 11pt;
+            transition: var(--transition-smooth);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+
+        .form-control[readonly] {
+            background-color: rgba(255,255,255,0.03);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Loading Spinner Animation */
+        .btn-loading-text {
+            display: none;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn.loading .btn-default-text {
+            display: none;
+        }
+
+        .btn.loading .btn-loading-text,
+        .btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            background-color: var(--bg-nav);
+            border-top: 1px solid var(--border-color);
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 16pt;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo span {
+            color: var(--primary);
+        }
+
+        .footer-legal {
+            font-size: 9.5pt;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 16px auto;
+        }
+
+        .footer-copy {
+            font-size: 9pt;
+            color: rgba(255,255,255,0.2);
+        }
+
+        /* --- RESPONSIVITAS (MOBILE & DESKTOP) --- */
+        @media (max-width: 992px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 40px;
+            }
+            .hero-title {
+                font-size: 26pt;
+            }
+            .hero-desc {
+                margin: 0 auto 36px auto;
+            }
+            .hero-cta {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 80px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 80px);
+                background-color: var(--bg-nav);
+                flex-direction: column;
+                padding: 40px 24px;
+                gap: 24px;
+                transition: var(--transition-smooth);
+                border-top: 1px solid var(--border-color);
+                align-items: flex-start;
+            }
+
+            #nav-checkbox:checked ~ .nav-menu {
+                left: 0;
+            }
+
+            /* Hamburger animation */
+            #nav-checkbox:checked ~ .menu-toggle span:nth-child(1) {
+                transform: rotate(45deg) translate(6px, 6px);
+            }
+            #nav-checkbox:checked ~ .menu-toggle span:nth-child(2) {
+                opacity: 0;
+            }
+            #nav-checkbox:checked ~ .menu-toggle span:nth-child(3) {
+                transform: rotate(-45deg) translate(6px, -7px);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. NAVBAR RESPONSIF -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">Game<span>Lab</span></a>
+            
+            <input type="checkbox" id="nav-checkbox">
+            <label for="nav-checkbox" class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active">Home</a></li>
+                <li><a href="#produk" class="nav-link">Produk</a></li>
+                <li><a href="#faq" class="nav-link">FAQ</a></li>
+                <li><a href="#kontak" class="nav-link">Kontak</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 2. HERO SECTION -->
+    <header class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <h1 class="hero-title">Akses Premium Ke <span>Produk Digital</span> Terbaik</h1>
+                <p class="hero-desc">Tingkatkan produktivitas dan keahlian Anda melalui koleksi e-book premium, panduan taktis, dan aset kreatif siap pakai dari GameLab.</p>
+                <div class="hero-cta">
+                    <a href="#produk" class="btn btn-primary">Lihat Produk</a>
+                    <a href="#produk" class="btn btn-secondary">Beli Sekarang</a>
+                </div>
+            </div>
+            <div class="hero-mockup">
+                <div class="mockup-wrapper">
+                    <img src="https://placehold.net/default.png" alt="Mockup GameLab" class="mockup-image" width="450" height="300">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. SECTION MENGAPA MEMILIH KAMI -->
+    <section class="section-padding" style="background-color: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Mengapa Memilih GameLab?</h2>
+                <p>Kami memastikan setiap resource digital dirancang untuk memberikan dampak langsung bagi perkembangan Anda.</p>
+            </div>
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">★</div>
+                    <h3>Produk Digital Berkualitas</h3>
+                    <p>Kurikulum, aset, dan materi disusun oleh expert berpengalaman di industrinya masing-masing.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">∞</div>
+                    <h3>Sekali Beli, Akses Selamanya</h3>
+                    <p>Tidak ada biaya bulanan yang tersembunyi. Dapatkan free lifetime update untuk setiap item.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">✔</div>
+                    <h3>Cocok untuk Pemula</h3>
+                    <p>Disusun secara runut langkah demi langkah, mempermudah adaptasi materi tanpa pusing.</p>
+                </div>
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">☘</div>
+                    <h3>Hemat & Ramah Lingkungan</h3>
+                    <p>Tanpa biaya cetak atau pengiriman fisik. Instan dikirim ke email langsung detik ini juga.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. SECTION PRODUK -->
+    <section id="produk" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <h2>Katalog Produk Pilihan</h2>
+                <p>Pilih dan miliki aset pengetahuan digital eksklusif untuk akselerasi karir dan bisnis Anda.</p>
+            </div>
+            <div class="products-grid">
+                <!-- Card Produk 1: Kopi Premium E-Book -->
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <span class="product-tag">E-Book</span>
+                        <img src="https://placehold.net/default.png" alt="E-Book Bisnis Kopi" class="product-img">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">E-Book Masterclass Bisnis Kopi</h3>
+                        <p class="product-desc">Formula rahasia dan SOP operasional membangun kedai kopi modern dengan modal minim namun profit maksimal.</p>
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span class="price-label">Harga</span>
+                                <span class="price-value">Rp 75.000</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openCheckout('PROD-KOPI', 'E-Book Masterclass Bisnis Kopi', 75000)">Beli</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Produk 2: Video Kursus Keripik -->
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <span class="product-tag">Video Course</span>
+                        <img src="https://placehold.net/default.png" alt="Kursus Keripik Cuan" class="product-img">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Video Panduan Keripik Cuan</h3>
+                        <p class="product-desc">Panduan komprehensif dari riset bahan baku, rahasia kegaringan, hingga taktik pemasaran digital produk keripik rumahan.</p>
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span class="price-label">Harga</span>
+                                <span class="price-value">Rp 120.000</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openCheckout('PROD-KERIPIK', 'Video Panduan Keripik Cuan', 120000)">Beli</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Produk 3: Pack Desain Kemasan -->
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <span class="product-tag">Template Asset</span>
+                        <img src="https://placehold.net/default.png" alt="Template Kemasan Premium" class="product-img">
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Template Desain Kemasan Premium</h3>
+                        <p class="product-desc">Kumpulan asset visual siap pakai untuk kemasan produk F&B (Kopi & Keripik) yang elegan dan menjual.</p>
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span class="price-label">Harga</span>
+                                <span class="price-value">Rp 95.000</span>
+                            </div>
+                            <button class="btn btn-primary btn-sm" onclick="openCheckout('PROD-ASSET', 'Template Desain Kemasan Premium', 95000)">Beli</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. CTA CHECKOUT (INTERAKTIF MODAL) -->
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 class="modal-title">Formulir Pembelian</h3>
+                <button class="modal-close" onclick="closeCheckout()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="checkout-form" onsubmit="handlePayment(event)">
+                    <!-- Hidden fields / Readonly -->
+                    <div class="summary-box">
+                        <div class="summary-row">
+                            <span>Produk:</span>
+                            <span id="display-product-name">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Order ID:</span>
+                            <span id="display-order-id">-</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Total Pembayaran:</span>
+                            <span id="display-gross-amount">Rp 0</span>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="input-product-id">
+                    <input type="hidden" id="input-product-name">
+                    <input type="hidden" id="input-order-id">
+                    <input type="hidden" id="input-gross-amount">
+
+                    <!-- Customer Input -->
+                    <div class="form-group">
+                        <label class="form-label" for="customer-email">Alamat Email</label>
+                        <input type="email" id="customer-email" class="form-control" placeholder="nama@email.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="customer-phone">Nomor HP / WhatsApp</label>
+                        <input type="tel" id="customer-phone" class="form-control" placeholder="08123456789" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 12px; margin-top: 10px;" id="btn-pay">
+                        <span class="spinner"></span>
+                        <span class="btn-default-text">Bayar Sekarang</span>
+                        <span class="btn-loading-text">Memproses Transaksi...</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. SECTION FAQ -->
+    <section id="faq" class="section-padding" style="background-color: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Pertanyaan Umum (FAQ)</h2>
+                <p>Masih ragu? Temukan jawaban dari beberapa pertanyaan yang paling sering diajukan pelanggan kami.</p>
+            </div>
+            <div class="faq-wrapper">
+                <!-- FAQ 1 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq-1" class="faq-input">
+                    <label for="faq-1" class="faq-trigger">
+                        <span>Bagaimana cara saya mengakses produk setelah pembayaran?</span>
+                        <span class="faq-icon"></span>
+                    </label>
+                    <div class="faq-content">
+                        <p>Setelah status pembayaran Anda dikonfirmasi sukses oleh sistem Midtrans, tautan unduhan akses produk digital otomatis akan dikirim ke alamat email yang Anda isi di formulir checkout.</p>
+                    </div>
+                </div>
+                <!-- FAQ 2 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq-2" class="faq-input">
+                    <label for="faq-2" class="faq-trigger">
+                        <span>Apakah metode pembayaran yang tersedia aman?</span>
+                        <span class="faq-icon"></span>
+                    </label>
+                    <div class="faq-content">
+                        <p>Sangat aman. Seluruh transaksi di GameLab dienkripsi dan diproses secara real-time langsung melalui Midtrans (gerbang pembayaran resmi bersertifikasi Bank Indonesia), mendukung e-wallet, QRIS, Virtual Account, hingga gerai retail.</p>
+                    </div>
+                </div>
+                <!-- FAQ 3 -->
+                <div class="faq-item">
+                    <input type="checkbox" id="faq-3" class="faq-input">
+                    <label for="faq-3" class="faq-trigger">
+                        <span>Apakah ada jaminan pembaruan materi di masa depan?</span>
+                        <span class="faq-icon"></span>
+                    </label>
+                    <div class="faq-content">
+                        <p>Ya! Setiap kali ada revisi materi, pembaruan strategi baru, atau penambahan materi asset, Anda akan langsung dikirimi versi terbarunya lewat email secara cuma-cuma tanpa dipungut biaya tambahan.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. FOOTER -->
+    <footer id="kontak" class="footer">
+        <div class="container">
+            <div class="footer-logo">Game<span>Lab</span></div>
+            <p class="footer-legal">GameLab merupakan platform e-commerce penyedia produk edukasi digital dan aset visual penunjang bisnis kreatif. Seluruh transaksi dilindungi hukum Indonesia dan diproses melalui partner pembayaran tepercaya.</p>
+            <p class="footer-copy">&copy; 2026 GameLab. All rights reserved. Dibuat dengan dedikasi penuh.</p>
+        </div>
+    </footer>
+
+    <!-- 6. INTEGRASI MIDTRANS SANDBOX (FRONTEND ONLY) -->
+    <script type="text/javascript">
+        /*
+          ========================================================================
+          KONFIGURASI MIDTRANS SANDBOX
+          ========================================================================
+          PENTING UNTUK DEVELOPER:
+          - Ganti nilai di bawah dengan Server Key & Client Key dari Dashboard Midtrans Anda.
+          - Harap diingat bahwa meletakkan Server Key langsung di frontend sangat tidak
+            direkomendasikan dalam tahap PRODUKSI/LIVE demi keamanan rahasia data.
+            Gunakan arsitektur backend untuk mengamankan Server Key Anda nanti.
+        */
+        const MIDTRANS_SERVER_KEY = "Mid-server-klkBwmvlNNxt_prems4I24Oi"; // Isikan Server Key Anda di sini
+        // const MIDTRANS_CLIENT_KEY = "YOUR_MIDTRANS_CLIENT_KEY"; // Isikan Client Key Anda di sini
+
+        const modalOverlay = document.getElementById('checkout-modal');
+        const checkoutForm = document.getElementById('checkout-form');
+        const btnPay = document.getElementById('btn-pay');
+
+        // Fungsi Membuka Modal & Set Data Produk
+        function openCheckout(productId, productName, productPrice) {
+            // Generate Order ID Otomatis: DE- + Timestamp
+            const timestamp = Date.now();
+            const orderId = `DE-${timestamp}`;
+
+            // Set Form Values (Data Input Sembunyi/Readonly)
+            document.getElementById('input-product-id').value = productId;
+            document.getElementById('input-product-name').value = productName;
+            document.getElementById('input-order-id').value = orderId;
+            document.getElementById('input-gross-amount').value = productPrice;
+
+            // Set Tampilan Ringkasan Modal
+            document.getElementById('display-product-name').innerText = productName;
+            document.getElementById('display-order-id').innerText = orderId;
+            document.getElementById('display-gross-amount').innerText = `Rp ${productPrice.toLocaleString('id-ID')}`;
+
+            // Tampilkan Modal
+            modalOverlay.classList.add('active');
+        }
+
+        // Fungsi Menutup Modal Checkout
+        function closeCheckout() {
+            modalOverlay.classList.remove('active');
+            checkoutForm.reset();
+        }
+
+        // Fungsi Penanganan Pengiriman & Integrasi Midtrans API via Proxy CORS
+        async function handlePayment(event) {
+            event.preventDefault();
+
+            // Aktifkan Efek Animasi Loading
+            btnPay.classList.add('loading');
+
+            // Tangkap Data Payload Dari Input Form
+            const orderId = document.getElementById('input-order-id').value;
+            const grossAmount = parseInt(document.getElementById('input-gross-amount').value, 10);
+            const productId = document.getElementById('input-product-id').value;
+            const productName = document.getElementById('input-product-name').value;
+            const customerEmail = document.getElementById('customer-email').value;
+            const customerPhone = document.getElementById('customer-phone').value;
+
+            // Konstruksi Payload Sesuai Spesifikasi Midtrans Snap API
+            const payload = {
+                transaction_details: {
+                    order_id: orderId,
+                    gross_amount: grossAmount
+                },
+                item_details: [
+                    {
+                        id: productId,
+                        price: grossAmount,
+                        quantity: 1,
+                        name: productName
+                    }
+                ],
+                customer_details: {
+                    email: customerEmail,
+                    phone: customerPhone
+                }
+            };
+
+            // Menggunakan Proxy CORS Tanpa Tanda Tanya (?) Sesuai Ketentuan Instruksi
+            const proxyUrl = "https://corsproxy.io/";
+            const targetUrl = "https://app.sandbox.midtrans.com/snap/v1/transactions";
+            const endpoint = proxyUrl + targetUrl;
+
+            try {
+                // Membuat Otentikasi Basic Header (Server Key di-encode ke Base64)
+                // Menggabungkan Server Key + Titik Dua (:) Sesuai Aturan HTTP Basic Auth Midtrans
+                const basicAuthToken = btoa(MIDTRANS_SERVER_KEY + ":");
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Basic ${basicAuthToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                // Matikan Efek Loading & Tutup Modal Sejenak
+                btnPay.classList.remove('loading');
+                closeCheckout();
+
+                // Pemicu Snap.js Pay dari Token yang Diterima
+                if (result && result.token) {
+                    window.snap.pay(result.token, {
+                        onSuccess: function(result){
+                            alert("Pembayaran Sukses! Terima kasih.");
+                            console.log(result);
+                        },
+                        onPending: function(result){
+                            alert("Menunggu Pembayaran Anda.");
+                            console.log(result);
+                        },
+                        onError: function(result){
+                            alert("Pembayaran Gagal! Silakan coba kembali.");
+                            console.log(result);
+                        },
+                        onClose: function(){
+                            alert('Anda menutup popup sebelum menyelesaikan pembayaran.');
+                        }
+                    });
+                } else {
+                    alert("Gagal mendapatkan Token Transaksi dari Midtrans Sandbox.");
+                }
+
+            } catch (error) {
+                console.error("Kesalahan Deteksi Transaksi:", error);
+                alert("Terjadi masalah koneksi atau konfigurasi Server Key tidak valid. Silakan periksa log konsol.");
+                btnPay.classList.remove('loading');
+            }
+        }
+    </script>
+</body>
+</html>
